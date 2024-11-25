@@ -70,10 +70,11 @@ def _set_object(world, pos, player, tunnels):
     pass
   elif dist > 3 and material == 'grass' and uniform() > 0.985:
     world.add(objects.Cow(world, (x, y)))
-  elif dist > 10 and uniform() > 0.993:
-    world.add(objects.Zombie(world, (x, y), player))
-  elif material == 'path' and tunnels[x, y] and uniform() > 0.95:
-    world.add(objects.Skeleton(world, (x, y), player))
+  # MOD: Remove zombie and skeleton spawning
+  # elif dist > 10 and uniform() > 0.993:
+  #   world.add(objects.Zombie(world, (x, y), player))
+  # elif material == 'path' and tunnels[x, y] and uniform() > 0.95:
+  #   world.add(objects.Skeleton(world, (x, y), player))
 
 
 def _simplex(simplex, x, y, z, sizes, normalize=True):
