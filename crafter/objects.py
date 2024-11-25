@@ -80,6 +80,7 @@ class Player(Object):
     self._thirst = 0
     self._fatigue = 0
     self._recover = 0
+    self._meat_collected = 0
 
   @property
   def texture(self):
@@ -207,6 +208,8 @@ class Player(Object):
       if obj.health <= 0:
         self.inventory['food'] += 6
         self.achievements['eat_cow'] += 1
+        # MOD: +1 meat_collected to increase env reward
+        self._meat_collected += 1
         # TODO: Keep track of previous inventory state to do this in a more
         # general way.
         self._hunger = 0

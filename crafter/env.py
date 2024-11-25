@@ -54,6 +54,8 @@ class Env(BaseClass):
     # Some libraries expect these attributes to be set.
     self.reward_range = None
     self.metadata = None
+    # MOD: Add count of meat collected
+    self._last_meat_collected = None
 
   @property
   def observation_space(self):
@@ -75,6 +77,8 @@ class Env(BaseClass):
     self._update_time()
     self._player = objects.Player(self._world, center)
     self._last_health = self._player.health
+    # MOD: Add count of meat collected
+    self._last_meat_collected = self._player._meat_collected
     self._world.add(self._player)
     self._unlocked = set()
     worldgen.generate_world(self._world, self._player)
@@ -101,7 +105,10 @@ class Env(BaseClass):
         if count > 0 and name not in self._unlocked}
     if unlocked:
       self._unlocked |= unlocked
-      reward += 1.0
+      # MOD: reward based on meat collected
+      # reward += 1.0
+    reward += self._player._meat_collected - self._last_meat_collected
+    self._last_meat_collected = self._player._meat_collected
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
     done = dead or over
