@@ -26,7 +26,7 @@ class Env(BaseClass):
 
   def __init__(
       self, area=(64, 64), view=(9, 9), size=(64, 64),
-      reward=True, length=10000, seed=None):
+      reward=True, length=10000, seed=None, custom_reward_func=None):
     view = np.array(view if hasattr(view, '__len__') else (view, view))
     size = np.array(size if hasattr(size, '__len__') else (size, size))
     seed = np.random.randint(0, 2**31 - 1) if seed is None else seed
@@ -34,6 +34,7 @@ class Env(BaseClass):
     self._view = view
     self._size = size
     self._reward = reward
+    self._custom_reward_func = custom_reward_func
     self._length = length
     self._seed = seed
     self._episode = 0
@@ -105,9 +106,17 @@ class Env(BaseClass):
         if count > 0 and name not in self._unlocked}
     if unlocked:
       self._unlocked |= unlocked
-      # MOD: reward based on meat collected
+      # MOD: modify the environment reward below
       # reward += 1.0
-    reward += self._player._meat_collected - self._last_meat_collected
+    # MOD: Use custom reward function if provided, or default to meat collected
+    if self._custom_reward_func is not None:
+      step_reward = self._custom_reward_func(obs)
+    else:
+      step_reward = self._player._meat_collected - self._last_meat_collected
+    reward += step_reward
+    # DEBUG (to delete)
+    if self._player._meat_collected - self._last_meat_collected > 0:
+        print(f"Meat collected: {self._player._meat_collected - self._last_meat_collected}")
     self._last_meat_collected = self._player._meat_collected
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
