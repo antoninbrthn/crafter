@@ -285,7 +285,8 @@ class Cow(Object):
 
   def __init__(self, world, pos):
     super().__init__(world, pos)
-    self.health = 3
+    # MOD: drop health to 1
+    self.health = 1
 
   @property
   def texture(self):
