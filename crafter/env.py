@@ -114,9 +114,6 @@ class Env(BaseClass):
     else:
       step_reward = self._player._meat_collected - self._last_meat_collected
     reward += step_reward
-    # DEBUG (to delete)
-    if self._player._meat_collected - self._last_meat_collected > 0:
-        print(f"Meat collected: {self._player._meat_collected - self._last_meat_collected}")
     self._last_meat_collected = self._player._meat_collected
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length

@@ -247,7 +247,6 @@ class Player(Object):
               self.inventory[item] -= amount
             # Spawn a cow
             self.world.add(Cow(self.world, new_pos))
-            print('Bred cow')
             return
     if self.world[target][1]:
       return
