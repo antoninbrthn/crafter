@@ -240,6 +240,9 @@ class Player(Object):
         # Find an empty adjacent position to spawn the new cow
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
           new_pos = (target[0] + dx, target[1] + dy)
+          # check that new_pos is within bounds
+          if (new_pos[0] < 0) or (new_pos[0] >= self.world.area[0]) or (new_pos[1] < 0) or (new_pos[1] >= self.world.area[1]):
+                continue
           if (self.world[new_pos][1] is None) and (self.world._obj_map[new_pos] == 0):
             # Discard sapling from inventory
             info = constants.place[name]
