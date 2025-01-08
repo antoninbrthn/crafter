@@ -124,6 +124,7 @@ class Env(BaseClass):
         'discount': 1 - float(dead),
         'semantic': self._sem_view(),
         'player_pos': self._player.pos,
+        'player_facing': self._player.facing,
         'reward': reward,
     }
     if not self._reward:
