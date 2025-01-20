@@ -233,7 +233,7 @@ class Player(Object):
 
   def _place(self, name, target, material):
     # MOD: Check if facing a cow and spawn another cow next to it
-    if name == 'plant':
+    if (name == 'plant') & (self.inventory['sapling'] > 0):
       facing_pos = self.pos + self.facing
       material, obj = self.world[facing_pos]
       if isinstance(obj, Cow):
@@ -243,7 +243,7 @@ class Player(Object):
           # check that new_pos is within bounds
           if (new_pos[0] < 0) or (new_pos[0] >= self.world.area[0]) or (new_pos[1] < 0) or (new_pos[1] >= self.world.area[1]):
                 continue
-          if (self.world[new_pos][1] is None) and (self.world._obj_map[new_pos] == 0):
+          if self.is_free(new_pos) and (self.world[new_pos][1] is None) and (self.world._obj_map[new_pos] == 0):
             # Discard sapling from inventory
             info = constants.place[name]
             for item, amount in info['uses'].items():
