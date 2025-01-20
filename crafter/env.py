@@ -26,7 +26,7 @@ class Env(BaseClass):
 
   def __init__(
       self, area=(64, 64), view=(9, 9), size=(64, 64),
-      reward=True, length=10000, seed=None, custom_reward_func=None):
+      reward=True, length=10000, seed=None, custom_reward_func=None, difficulty='easy'):
     view = np.array(view if hasattr(view, '__len__') else (view, view))
     size = np.array(size if hasattr(size, '__len__') else (size, size))
     seed = np.random.randint(0, 2**31 - 1) if seed is None else seed
@@ -34,6 +34,7 @@ class Env(BaseClass):
     self._view = view
     self._size = size
     self._reward = reward
+    # MOD: add custom reward function
     self._custom_reward_func = custom_reward_func
     self._length = length
     self._seed = seed
@@ -57,6 +58,8 @@ class Env(BaseClass):
     self.metadata = None
     # MOD: Add count of meat collected
     self._last_meat_collected = None
+    # MOD: set difficulty mode
+    self._difficulty = difficulty
 
   @property
   def observation_space(self):
@@ -82,7 +85,7 @@ class Env(BaseClass):
     self._last_meat_collected = self._player._meat_collected
     self._world.add(self._player)
     self._unlocked = set()
-    worldgen.generate_world(self._world, self._player)
+    worldgen.generate_world(self._world, self._player, self._difficulty)
     return self._obs()
 
   def step(self, action):
@@ -168,7 +171,7 @@ class Env(BaseClass):
     #     lambda num, space: (0 if space < 6 else 1, 2))
     self._balance_object(
         chunk, objs, objects.Cow, 'grass', 5, 5, 0.01, 0.1,
-        lambda pos: objects.Cow(self._world, pos),
+        lambda pos: objects.Cow(self._world, pos, self._difficulty),
         lambda num, space: (0 if space < 30 else 1, 1.5 + light))
 
   def _balance_object(

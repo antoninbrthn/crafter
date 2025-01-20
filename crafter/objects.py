@@ -233,24 +233,32 @@ class Player(Object):
 
   def _place(self, name, target, material):
     # MOD: Check if facing a cow and spawn another cow next to it
+    # if (name == 'plant') & (self.inventory['sapling'] > 0):
+    #   facing_pos = self.pos + self.facing
+    #   material, obj = self.world[facing_pos]
+    #   if isinstance(obj, Cow):
+    #     # Find an empty adjacent position to spawn the new cow
+    #     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+    #       new_pos = (target[0] + dx, target[1] + dy)
+    #       # check that new_pos is within bounds
+    #       if (new_pos[0] < 0) or (new_pos[0] >= self.world.area[0]) or (new_pos[1] < 0) or (new_pos[1] >= self.world.area[1]):
+    #             continue
+    #       if self.is_free(new_pos) and (self.world[new_pos][1] is None) and (self.world._obj_map[new_pos] == 0):
+    #         # Discard sapling from inventory
+    #         info = constants.place[name]
+    #         for item, amount in info['uses'].items():
+    #           self.inventory[item] -= amount
+    #         # Spawn a cow
+    #         self.world.add(Cow(self.world, new_pos))
+    #         return
     if (name == 'plant') & (self.inventory['sapling'] > 0):
       facing_pos = self.pos + self.facing
       material, obj = self.world[facing_pos]
       if isinstance(obj, Cow):
-        # Find an empty adjacent position to spawn the new cow
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-          new_pos = (target[0] + dx, target[1] + dy)
-          # check that new_pos is within bounds
-          if (new_pos[0] < 0) or (new_pos[0] >= self.world.area[0]) or (new_pos[1] < 0) or (new_pos[1] >= self.world.area[1]):
-                continue
-          if self.is_free(new_pos) and (self.world[new_pos][1] is None) and (self.world._obj_map[new_pos] == 0):
-            # Discard sapling from inventory
-            info = constants.place[name]
-            for item, amount in info['uses'].items():
-              self.inventory[item] -= amount
-            # Spawn a cow
-            self.world.add(Cow(self.world, new_pos))
-            return
+        obj.breed_count += 1
+        for item, amount in constants.place[name]['uses'].items():
+          self.inventory[item] -= 1
+        return
     if self.world[target][1]:
       return
     info = constants.place[name]
@@ -285,10 +293,18 @@ class Player(Object):
 
 class Cow(Object):
 
-  def __init__(self, world, pos):
+  def __init__(self, world, pos, difficulty):
     super().__init__(world, pos)
     # MOD: drop health to 1
-    self.health = 1
+    self.difficulty = difficulty
+    if self.difficulty == 'easy':
+      self.health = 1
+      self.breed_threshold = 1
+    elif self.difficulty == 'medium':
+      self.health = 3
+      self.breed_threshold = 2
+    self.breed_count = 0
+
 
   @property
   def texture(self):
@@ -300,7 +316,20 @@ class Cow(Object):
     if self.random.uniform() < 0.5:
       direction = self.random_dir()
       self.move(direction)
+    # MOD: add breeding mechanism
+    if self.breed_count >= self.breed_threshold:
+      self.breed()
+      self.breed_count = 0
 
+  def breed(self):
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+      new_pos = self.pos + np.array([dx, dy])
+      if (new_pos[0] < 0) or (new_pos[0] >= self.world.area[0]) or (new_pos[1] < 0) or (
+              new_pos[1] >= self.world.area[1]):
+        continue
+      if self.is_free(new_pos):
+        self.world.add(Cow(self.world, new_pos, self.difficulty))
+        break
 
 class Zombie(Object):
 

@@ -26,6 +26,7 @@ def main():
   parser.add_argument('--wait', type=boolean, default=False)
   parser.add_argument('--death', type=str, default='reset', choices=[
       'continue', 'reset', 'quit'])
+  parser.add_argument('--difficulty', type=str, default='medium')
   args = parser.parse_args()
 
   keymap = {
@@ -60,7 +61,7 @@ def main():
   size[1] = size[1] or args.window[1]
 
   env = crafter.Env(
-      area=args.area, view=args.view, length=args.length, seed=args.seed)
+      area=args.area, view=args.view, length=args.length, seed=args.seed, difficulty=args.difficulty)
   env = crafter.Recorder(env, args.record)
   env.reset()
   achievements = set()
@@ -68,6 +69,7 @@ def main():
   return_ = 0
   was_done = False
   print('Diamonds exist:', env._world.count('diamond'))
+  print('Difficulty:', env._difficulty)
 
   pygame.init()
   screen = pygame.display.set_mode(args.window)
