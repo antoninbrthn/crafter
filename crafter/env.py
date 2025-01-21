@@ -197,3 +197,4 @@ class Env(BaseClass):
       away = self._player.distance(obj.pos) >= despan_dist
       if away:
         self._world.remove(obj)
+

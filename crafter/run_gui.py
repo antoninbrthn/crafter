@@ -26,7 +26,7 @@ def main():
   parser.add_argument('--wait', type=boolean, default=False)
   parser.add_argument('--death', type=str, default='reset', choices=[
       'continue', 'reset', 'quit'])
-  parser.add_argument('--difficulty', type=str, default='medium')
+  parser.add_argument('--difficulty', type=str, default='easy')
   args = parser.parse_args()
 
   keymap = {
