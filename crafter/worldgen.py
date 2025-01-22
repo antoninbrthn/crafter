@@ -68,9 +68,9 @@ def _set_object(world, pos, player, tunnels, difficulty):
   material, _ = world[x, y]
   if material not in constants.walkable:
     pass
-  # elif dist > 3 and material == 'grass' and uniform() > 0.985:
+  elif dist > 3 and material == 'grass' and uniform() > 0.985:
   # MOD: spawn 3x more cows
-  elif dist > 3 and material == 'grass' and uniform() > 0.955:
+  # elif dist > 3 and material == 'grass' and uniform() > 0.955:
     world.add(objects.Cow(world, (x, y), difficulty))
   # MOD: Remove zombie and skeleton spawning
   # elif dist > 10 and uniform() > 0.993:
