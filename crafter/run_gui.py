@@ -14,7 +14,7 @@ import crafter
 def main():
   boolean = lambda x: bool(['False', 'True'].index(x))
   parser = argparse.ArgumentParser()
-  parser.add_argument('--seed', type=int, default=None)
+  parser.add_argument('--seed', type=int, default=1)
   parser.add_argument('--area', nargs=2, type=int, default=(64, 64))
   parser.add_argument('--view', type=int, nargs=2, default=(9, 9))
   parser.add_argument('--length', type=int, default=None)
@@ -26,7 +26,7 @@ def main():
   parser.add_argument('--wait', type=boolean, default=False)
   parser.add_argument('--death', type=str, default='reset', choices=[
       'continue', 'reset', 'quit'])
-  parser.add_argument('--difficulty', type=str, default='easy')
+  parser.add_argument('--difficulty', type=str, default='medium')
   args = parser.parse_args()
 
   keymap = {
