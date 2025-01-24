@@ -73,6 +73,8 @@ class Player(Object):
     self.inventory = {
         name: info['initial'] for name, info in constants.items.items()}
     self.achievements = {name: 0 for name in constants.achievements}
+    # MOD: add tracker of saplings given to cow
+    self.achievements['sapling_to_cow'] = 0
     self.action = 'noop'
     self.sleeping = False
     self._last_health = self.health
@@ -258,6 +260,7 @@ class Player(Object):
         obj.breed_count += 1
         for item, amount in constants.place[name]['uses'].items():
           self.inventory[item] -= 1
+          self.achievements['sapling_to_cow'] += 1
         return
     if self.world[target][1]:
       return
