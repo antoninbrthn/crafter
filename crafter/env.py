@@ -101,7 +101,10 @@ class Env(BaseClass):
         if count > 0 and name not in self._unlocked}
     if unlocked:
       self._unlocked |= unlocked
-      reward += 1.0
+      # MOD: no reward for achivements
+      # reward += 1.0
+    # MOD: flat 0.01 reward for survival
+    reward += 0.01
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
     done = dead or over
