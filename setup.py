@@ -1,10 +1,10 @@
 import setuptools
 import pathlib
-
+from crafter import __version__
 
 setuptools.setup(
     name='crafter',
-    version='1.8.3-surv',
+    version=__version__,
     description='Open world survival game for reinforcement learning.',
     url='http://github.com/danijar/crafter',
     long_description=pathlib.Path('README.md').read_text(),
