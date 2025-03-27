@@ -1,7 +1,7 @@
 from .env import Env
 from .recorder import Recorder
 
-__version__ = "1.8.3-surv"  # survival mod
+__version__ = "1.8.3+surv"  # survival mod
 
 try:
   import gym
