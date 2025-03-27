@@ -26,7 +26,7 @@ class Env(BaseClass):
 
   def __init__(
       self, area=(64, 64), view=(9, 9), size=(64, 64),
-      reward=True, length=10000, seed=None):
+      reward=True, length=10000, seed=None, custom_reward_func=None):
     view = np.array(view if hasattr(view, '__len__') else (view, view))
     size = np.array(size if hasattr(size, '__len__') else (size, size))
     seed = np.random.randint(0, 2**31 - 1) if seed is None else seed
@@ -34,6 +34,7 @@ class Env(BaseClass):
     self._view = view
     self._size = size
     self._reward = reward
+    self._custom_reward_func = custom_reward_func
     self._length = length
     self._seed = seed
     self._episode = 0
@@ -103,8 +104,13 @@ class Env(BaseClass):
       self._unlocked |= unlocked
       # MOD: no reward for achivements
       # reward += 1.0
-    # MOD: flat 0.01 reward for survival
-    reward += 0.01
+    # MOD: Use custom reward function if provided, or default to flat 0.01 reward for survival
+    if self._custom_reward_func is not None:
+      step_reward = self._custom_reward_func(obs)
+    else:
+      # MOD: flat 0.01 reward for survival
+      step_reward = 0.01
+    reward += step_reward
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
     done = dead or over
