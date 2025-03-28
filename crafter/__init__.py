@@ -1,6 +1,8 @@
 from .env import Env
 from .recorder import Recorder
 
+__version__ = "1.8.3+farm"  # farming mod
+
 try:
   import gym
   gym.register(
