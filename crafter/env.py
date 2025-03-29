@@ -113,7 +113,14 @@ class Env(BaseClass):
       # reward += 1.0
     # MOD: Use custom reward function if provided, or default to meat collected
     if self._custom_reward_func is not None:
-      step_reward = self._custom_reward_func(obs)
+      step_reward = self._custom_reward_func({        
+        'inventory': self._player.inventory.copy(),
+        'achievements': self._player.achievements.copy(),
+        'discount': 1 - float(dead),
+        'semantic': self._sem_view(),
+        'player_pos': self._player.pos,
+        'player_facing': self._player.facing
+        })
     else:
       step_reward = self._player._meat_collected - self._last_meat_collected
     reward += step_reward
