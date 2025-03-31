@@ -88,7 +88,7 @@ class Env(BaseClass):
     worldgen.generate_world(self._world, self._player, self._difficulty)
     return self._obs()
 
-  def step(self, action):
+  def step(self, action, return_both_rewards=False):
     self._step += 1
     self._update_time()
     self._player.action = constants.actions[action]
@@ -111,20 +111,30 @@ class Env(BaseClass):
       self._unlocked |= unlocked
       # MOD: modify the environment reward below
       # reward += 1.0
+    
+    # Calculate the meat collection reward
+    step_reward = self._player._meat_collected - self._last_meat_collected
+    true_reward = reward + step_reward
+    self._last_meat_collected = self._player._meat_collected
+    
     # MOD: Use custom reward function if provided, or default to meat collected
     if self._custom_reward_func is not None:
-      step_reward = self._custom_reward_func({        
+      state_info = {        
         'inventory': self._player.inventory.copy(),
         'achievements': self._player.achievements.copy(),
-        'discount': 1 - float(dead),
         'semantic': self._sem_view(),
         'player_pos': self._player.pos,
         'player_facing': self._player.facing
-        })
+      }
+      step_reward_custom = self._custom_reward_func(state_info)
+      if isinstance(step_reward_custom, dict):
+        step_reward_custom = step_reward_custom['reward']
+      elif isinstance(step_reward_custom, tuple):
+        step_reward_custom = step_reward_custom[0]
+      custom_reward = reward + step_reward_custom
     else:
-      step_reward = self._player._meat_collected - self._last_meat_collected
-    reward += step_reward
-    self._last_meat_collected = self._player._meat_collected
+      custom_reward = true_reward
+    
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
     done = dead or over
@@ -136,10 +146,14 @@ class Env(BaseClass):
         'player_pos': self._player.pos,
         'player_facing': self._player.facing,
         'reward': reward,
+        'true_reward': true_reward,  # Store true_reward in info dict
+        'custom_reward': custom_reward,  # Store custom_reward in info dict
     }
     if not self._reward:
       reward = 0.0
-    return obs, reward, done, info
+    
+    # Always return standard format, but include both rewards in info dict
+    return obs, custom_reward, done, info
 
   def render(self, size=None):
     size = size or self._size
