@@ -102,15 +102,7 @@ class Env(BaseClass):
         if count > 0 and name not in self._unlocked}
     if unlocked:
       self._unlocked |= unlocked
-      # MOD: no reward for achivements
-      # reward += 1.0
-    # MOD: Use custom reward function if provided, or default to flat 0.01 reward for survival
-    if self._custom_reward_func is not None:
-      step_reward = self._custom_reward_func(obs)
-    else:
-      # MOD: flat 0.01 reward for survival
-      step_reward = 0.01
-    reward += step_reward
+      reward += 1.0
     dead = self._player.health <= 0
     over = self._length and self._step >= self._length
     done = dead or over
